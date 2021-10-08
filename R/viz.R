@@ -78,7 +78,8 @@ maaslin2_heatmap <-
         border_color = 'grey93',
         color = colorRampPalette(c("darkblue", "grey90", "darkred")),
         col_rotate = 90,
-        first_n = 50) {
+        first_n = 50,
+        cluster_cols = TRUE) {
 
         # read MaAsLin output
         df <- read.table(
@@ -225,7 +226,7 @@ maaslin2_heatmap <-
                     show_colnames = TRUE,
                     scale = "none",
                     cluster_rows = FALSE,
-                    cluster_cols = TRUE,
+                    cluster_cols = cluster_cols,
                     clustering_distance_rows = "euclidean",
                     clustering_distance_cols = "euclidean",
                     legend = TRUE,
@@ -255,7 +256,8 @@ save_heatmap <-
         metadata_label = 'metadata',
         border_color = "grey93",
         color = colorRampPalette(c("blue", "grey90", "red")),
-        first_n = 50) {
+        first_n = 50,
+        cluster_cols=FALSE) {
 
         # generate a heatmap and save it to a pdf and as a png
         heatmap <-
@@ -267,7 +269,8 @@ save_heatmap <-
                 metadata_label,
                 border_color,
                 color,
-                first_n)
+                first_n,
+                cluster_cols)
         
         if (!is.null(heatmap)) {
             pdf(heatmap_file)

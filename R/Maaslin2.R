@@ -92,6 +92,7 @@ args$correction <- correction_choices[1]
 args$standardize <- TRUE
 args$plot_heatmap <- TRUE
 args$heatmap_first_n <- 50
+args$heatmap_cluster_cols <- TRUE
 args$plot_scatter <- TRUE
 args$max_pngs <- 10
 args$cores <- 1
@@ -260,7 +261,17 @@ options <-
         dest = "heatmap_first_n",
         default = args$heatmap_first_n,
         help = paste("In heatmap, plot top N features with significant ",
-            "associations [ Default: %default ]"
+                     "associations [ Default: %default ]"
+        )
+    )
+options <-
+    optparse::add_option(
+        options,
+        c("-j", "--heatmap_cluster_cols"),
+        type = "logical",
+        dest = "heatmap_cluster_cols",
+        default = args$heatmap_cluster_cols,
+        help = paste("In heatmap, apply clustering to columns [ Default: %default ]"
         )
     )
 options <-
@@ -341,6 +352,7 @@ Maaslin2 <-
         plot_scatter = TRUE,
         max_pngs = 10,
         heatmap_first_n = 50,
+        heatmap_cluster_cols = TRUE,
         reference = NULL)
     {
         # Allow for lower case variables
@@ -1012,7 +1024,8 @@ Maaslin2 <-
                 "Writing heatmap of significant results to file: %s",
                 heatmap_file)
             save_heatmap(significant_results_file, heatmap_file, figures_folder,
-                first_n = heatmap_first_n)
+                first_n = heatmap_first_n, 
+                cluster_cols=heatmap_cluster_cols)
         }
         
         if (plot_scatter) {
