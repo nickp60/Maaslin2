@@ -1024,7 +1024,7 @@ Maaslin2 <-
                 "Writing heatmap of significant results to file: %s",
                 heatmap_file)
             save_heatmap(significant_results_file, heatmap_file, figures_folder,
-                first_n = heatmap_first_n, 
+                first_n = heatmap_first_n, fixed_effects=fixed_effects,
                 cluster_cols=heatmap_cluster_cols)
         }
         

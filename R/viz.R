@@ -192,6 +192,7 @@ maaslin2_heatmap <-
         
         rownames(a) <- unique(data)
         colnames(a) <- unique(verbose_metadata)
+        
 
         for (i in seq_len(dim(df)[1])) {
             current_metadata <- metadata[i]
