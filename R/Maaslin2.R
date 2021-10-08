@@ -96,6 +96,7 @@ args$plot_scatter <- TRUE
 args$max_pngs <- 10
 args$cores <- 1
 args$reference <- NULL
+args$save_fits <- FALSE
 args$interactions <- NULL
 ##############################
 # Add command line arguments #
@@ -322,6 +323,17 @@ options <-
             "semi-colon delimited for multiple variables [ Default: NA ]"
         )
     )
+options <-
+    optparse::add_option(
+        options,
+        c("-q", "--save_fits"),
+        type = "logical",
+        dest = "save_fits",
+        default = args$save_fits,
+        help = paste("Save model fit objects",
+                     "  [ Default: %default ]"
+        )
+    )
 
 option_not_valid_error <- function(message, valid_options) {
     logging::logerror(paste(message, ": %s"), toString(valid_options))
@@ -353,6 +365,7 @@ Maaslin2 <-
         plot_heatmap = TRUE,
         plot_scatter = TRUE,
         heatmap_first_n = 50,
+        save_fits=FALSE)
         max_pngs = 10,
         reference = NULL)
     {
@@ -847,7 +860,8 @@ Maaslin2 <-
                 formula = formula,
                 random_effects_formula = random_effects_formula,
                 correction = correction,
-                cores = cores
+                cores = cores,
+                save_fits_to=ifelse(save_fits, file.path(output, "raw_fit_objects.rda"), NA)
             )
         
         #################################################################
@@ -1078,6 +1092,7 @@ if (identical(environment(), globalenv()) &&
             current_args$plot_scatter,
             current_args$max_pngs,
             current_args$heatmap_first_n,
-            current_args$reference
+            current_args$reference,
+            current_args$save_fits
         )
 }
