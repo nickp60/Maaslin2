@@ -79,8 +79,9 @@ maaslin2_heatmap <-
         color = colorRampPalette(c("darkblue", "grey90", "darkred")),
         col_rotate = 90,
         first_n = 50,
+        fixed_effects=NULL,
         cluster_cols = TRUE) {
-
+      # print(as.list(match.call()))
         # read MaAsLin output
         df <- read.table(
             output_results,
@@ -163,7 +164,17 @@ maaslin2_heatmap <-
                verbose_metadata <- c(verbose_metadata, i)
             }
         }
+        # print(verbose_metadata)
+        # print(metadata_multi_level)
+        simple_fixed_effects <- fixed_effects[!fixed_effects %in%metadata_multi_level ]
+        lev_df <- data.frame(fe = simple_fixed_effects, fe_specific=simple_fixed_effects);
+        for (lev in metadata_multi_level){
+          tmp<-data.frame(fe_specific=verbose_metadata[grepl(lev, verbose_metadata)])
+          tmp$fe <- lev
+          lev_df <- rbind(tmp, lev_df)
+        }
 
+        # print(lev_df)
         n <- length(unique(data))
         m <- length(unique(verbose_metadata))
 
@@ -204,7 +215,13 @@ maaslin2_heatmap <-
                 next
             a[as.character(data[i]), as.character(current_metadata)] <- value[i]
         }
-      
+        print(cluster_cols)
+        if (!cluster_cols){
+          logging::loginfo(
+            paste("Adjusting x axis to match fixed effects"))
+          a<- a[, lev_df$fe_specific]
+          print(a)
+        }
         # get the range for the colorbar
         max_value <- ceiling(max(a))
         min_value <- ceiling(min(a))
@@ -256,6 +273,7 @@ save_heatmap <-
         data_label = 'data',
         metadata_label = 'metadata',
         border_color = "grey93",
+        fixed_effects=NULL,
         color = colorRampPalette(c("blue", "grey90", "red")),
         first_n = 50,
         cluster_cols=FALSE) {
@@ -270,8 +288,9 @@ save_heatmap <-
                 metadata_label,
                 border_color,
                 color,
-                first_n,
-                cluster_cols)
+                first_n=first_n,
+                fixed_effects=fixed_effects ,
+                cluster_cols=cluster_cols)
         
         if (!is.null(heatmap)) {
             pdf(heatmap_file)

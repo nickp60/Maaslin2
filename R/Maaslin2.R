@@ -442,6 +442,7 @@ Maaslin2 <-
         logging::logdebug("Fixed effects: %s", fixed_effects)
         logging::logdebug("Correction method: %s", correction)
         logging::logdebug("Standardize: %s", standardize)
+        logging::logdebug("Cluster Columns in heatmap?: %s", heatmap_cluster_cols)
         logging::logdebug("Cores: %d", cores)
         
         ####################################
@@ -1017,7 +1018,6 @@ Maaslin2 <-
         #######################################################
         # Create visualizations for results passing threshold #
         #######################################################
-        
         if (plot_heatmap) {
             heatmap_file <- file.path(output, "heatmap.pdf")
             logging::loginfo(
