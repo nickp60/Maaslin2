@@ -39,7 +39,7 @@ fit.data <-
                 paste(
                     '. ~', 
                     #paste(all.vars(formula)[-1], collapse = ' + '), 
-                    paste(labels(terms(tmp)), collapse = ' + '), 
+                    paste(labels(terms(formula)), collapse = ' + '), 
                     '.', 
                     sep = ' + ')
 	    formula <- update(random_effects_formula, formula)
