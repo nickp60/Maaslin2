@@ -23,7 +23,8 @@ fit.data <-
         formula = NULL,
         random_effects_formula = NULL,
         correction = "BH",
-        cores = 1) {
+        cores = 1,
+        save_fits_to=NA) {
 
         # set the formula default to all fixed effects if not provided
         if (is.null(formula))
@@ -37,12 +38,13 @@ fit.data <-
             formula <-
                 paste(
                     '. ~', 
-                    paste(all.vars(formula)[-1], collapse = ' + '), 
+                    #paste(all.vars(formula)[-1], collapse = ' + '), 
+                    paste(labels(terms(tmp)), collapse = ' + '), 
                     '.', 
                     sep = ' + ')
 	    formula <- update(random_effects_formula, formula)
 	}
-        
+
         #############################################################
         # Determine the function and summary for the model selected #
         #############################################################
@@ -241,13 +243,14 @@ fit.data <-
                         })
                     return(fit1)
                 })
-                
                 # Gather Output
                 output <- list()
                 if (all(!inherits(fit, "try-error"))) {
                     output$para <- summary_function(fit)
                     output$residuals <- residuals(fit)
                     output$fitted <- fitted(fit)
+                    output$fit <- fit
+                    output$name <- colnames(features)[x]
                     if (!(is.null(random_effects_formula))) {
                       l <- ranef_function(fit)
                       d<-as.vector(unlist(l))
@@ -267,6 +270,7 @@ fit.data <-
                     output$para$name <- colnames(metadata)
                     output$residuals <- NA
                     output$fitted <- NA
+                    output$fit <- NA
                     if (!(is.null(random_effects_formula))) output$ranef <- NA
                   }
                 colnames(output$para) <- c('coef', 'stderr' , 'pval', 'name')
@@ -302,7 +306,17 @@ fit.data <-
             }))
           row.names(ranef) <- colnames(features) 
         }
+ 
+        #################################
+        # Save Fit objects for analysis #
+        #################################
+        if (!is.na(save_fits_to)){
+          logging::loginfo("Saving %s fit objects", length(outputs))
+          fits <- lapply(outputs, function(x){x$fit})
+          names(fits) <- sapply(outputs, function(x){x$name})
+          saveRDS(fits, file = save_fits_to)
           
+        }
         ################################
         # Apply correction to p-values #
         ################################
