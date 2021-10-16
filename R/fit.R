@@ -335,12 +335,16 @@ fit.data <-
         # find the metadata name based on the match 
         # to the beginning of the string
         extract_metadata_name <- function(name) {
+          if (grepl(":", name)){
+            return(name)
+          } else{
             return(metadata_names_ordered[mapply(
                 startsWith, 
                 name, 
                 metadata_names_ordered)][1])
+          }
         }
-        paras$metadata <- unlist(lapply(paras$name, extract_metadata_name))
+        paras$metadata <- unlist(sapply(paras$name, extract_metadata_name))
         # compute the value as the model contrast minus metadata
         paras$value <-
             mapply(function(x, y) {

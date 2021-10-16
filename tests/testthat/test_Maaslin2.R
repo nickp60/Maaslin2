@@ -28,6 +28,14 @@ fit_data <- Maaslin2(features, metadata, 'output2', normalization = "NONE", tran
     random_effects = c('site', 'subject'),
     reference = 'diagnosis,nonIBD',
     standardize = FALSE, plot_heatmap = FALSE, plot_scatter = FALSE)
+# run with interaction
+fit_data_interaction <- Maaslin2(features, metadata, 'output2_interactions', normalization = "NONE", transform = "AST",
+                     fixed_effects = c('diagnosis', 'dysbiosis', 'antibiotics', 'age'),
+                     interactions = c("diagnosis:age"),
+                     random_effects = c('site', 'subject'),
+                     reference = 'diagnosis,nonIBD',
+                     standardize = FALSE, plot_heatmap = FALSE, plot_scatter = FALSE)
+
 maaslin_results = read.table(file.path("output2","significant_results.tsv"), header = TRUE, stringsAsFactors=FALSE)
 
 expect_that(expected_results_run2$metadata[1:50],equals(maaslin_results$metadata[1:50]))
@@ -73,3 +81,5 @@ counts_percent_filtered <- do_prevalence_abundance_filtering(unfiltered_data = c
 counts_ammount_filtered <- do_prevalence_abundance_filtering(unfiltered_data = counts_matrix, min_abundance = 20, min_prevalence = .1, min_variance = 0)
 expect_that(ceiling(relab_percent_filtered*100000), equals(counts_percent_filtered))
 expect_false(ncol(relab_percent_filtered) == ncol(counts_ammount_filtered))
+
+
